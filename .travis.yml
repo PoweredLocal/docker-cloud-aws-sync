@@ -9,10 +9,10 @@ go:
   - 1.6
 
 before_install:
-  - docker build -t dusterio/docker-cloud-aws-sync .
-  - docker run -d --name app dusterio/docker-cloud-aws-sync
+  - docker build -t pwred/docker-cloud-aws-sync .
+  - docker run -d --name app pwred/docker-cloud-aws-sync
 
 script:
   - docker login -e "$DOCKER_EMAIL" -u "$DOCKER_USER" -p "$DOCKER_PASS"
-  - docker commit app dusterio/docker-cloud-aws-sync
-  - docker push dusterio/docker-cloud-aws-sync
+  - docker commit app pwred/docker-cloud-aws-sync
+  - docker push pwred/docker-cloud-aws-sync
