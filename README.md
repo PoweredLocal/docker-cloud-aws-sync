@@ -28,7 +28,7 @@ Security groups are part of EC2 service so don't forget to attach a policy with 
 
 ## Running it as a Docker container
 
-There is a Dockerfile included and there is a [public repository](https://hub.docker.com/r/dusterio/docker-cloud-aws-sync/) in Docker Hub.
+There is a Dockerfile included and there is a [public repository](https://hub.docker.com/r/pwred/docker-cloud-aws-sync/) in Docker Hub.
 
 So either ```docker build ./``` or use the public image ```docker run -d -e DOCKER_CLOUD_xxx=xxx -e AWS_xxx=xxx dusterio/docker-cloud-aws-sync```
 
