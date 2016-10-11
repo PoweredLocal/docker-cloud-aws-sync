@@ -23,6 +23,8 @@ docker-cloud-aws-sync will fetch current node list, flush AWS security group and
 Afterwards, this script will keep listening to Docker Cloud events and if there are node updates – it will update AWS
 security accordingly.
 
+Security groups are part of EC2 service so don't forget to attach a policy with corresponding EC2 permissions (roles) to your API key.
+
 ## Running it as a Docker container
 
 There is a Dockerfile included and there is a [public repository](https://hub.docker.com/r/dusterio/docker-cloud-aws-sync/) in Docker Hub.
@@ -37,6 +39,7 @@ Script relies on several environment variables to access your Docker Cloud and A
 DOCKER_CLOUD_USER (required) - Your username in Docker Cloud
 DOCKER_CLOUD_KEY (required) - API key
 DOCKER_CLOUD_NAMESPACE (optional) - If necessary, organization namespace
+DOCKER_CLOUD_TAG (optional) - If specified, only nodes that have this tag will be processed
 
 AWS_ACCESS_KEY_ID (required) - AWS key id
 AWS_SECRET_ACCESS_KEY (required) - AWS key secret
@@ -44,3 +47,7 @@ AWS_SG_ID (required) - AWS security group id where rules should be pushed to
 AWS_REGION (required) - AWS region (AWS will use default if not set)
 
 ```
+
+# NB
+
+Please note that EC2 security groups allow up to 50 rules per group. Therefore, if you have more than 50 nodes you have to create multiple security groups and add Docker Cloud nodes to them based on tags. Or you have to migrate everything to a single cloud provider! :)

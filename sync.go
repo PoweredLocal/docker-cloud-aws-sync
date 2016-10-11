@@ -4,10 +4,11 @@ import "github.com/docker/go-dockercloud/dockercloud"
 import "github.com/aws/aws-sdk-go/service/ec2"
 import "github.com/aws/aws-sdk-go/aws/session"
 import "log"
-import "fmt"
 import "os"
-//import "strings"
 
+/*
+ * Return an environment variable. If it's not set - crash
+ */
 func getEnv(name string) string {
 	value := os.Getenv(name)
 
@@ -19,50 +20,44 @@ func getEnv(name string) string {
 	return value
 }
 
-func main() {
-	dockercloud.User = getEnv("DOCKER_CLOUD_USER")
-	dockercloud.ApiKey = getEnv("DOCKER_CLOUD_KEY")
-	dockercloud.Namespace = getEnv("DOCKER_CLOUD_NAMESPACE")
-	sg := getEnv("AWS_SG_ID")	
-
+/*
+ * Returns an array of public IP addresses  
+ */
+func getNodeIps() []string {
 	nodeList, err := dockercloud.ListNodes()
 
 	if err != nil {
   		log.Println(err)
+	} else {
+		log.Println("Received public IP list from Docker Cloud")
 	}
 
 	nodeIps := make([]string, 0)
 
-	log.Println("Nodes:")
+	if len(nodeList.Objects) == 0 {
+		log.Println("There are no nodes in your Docker Cloud account")
+		os.Exit(1)
+	}
 
 	for i := 0; i < len(nodeList.Objects); i++ {
-		nodeIps = append(nodeIps, nodeList.Objects[i].Public_ip)
+		if len(nodeList.Objects[i].Public_ip) > 0 {
+			nodeIps = append(nodeIps, nodeList.Objects[i].Public_ip + "/32")
+		}
     }
 
-    fmt.Printf("IPs are:\n%+v\n", nodeIps)
-    log.Println(sg)
+    return nodeIps
+}
 
-	//c := make(chan dockercloud.Event)
-	//e := make(chan error)
+/*
+ * Infinite loop - listening to Docker Cloud events
+ */
+func listenToEvents() {
+	log.Println("Listening to Docker Cloud events")
 
-	svc := ec2.New(session.New())
+	c := make(chan dockercloud.Event)
+	e := make(chan error)
 
-	// Call the DescribeInstances Operation
-	resp, err := svc.DescribeInstances(nil)
-	if err != nil {
-		panic(err)
-	}
-
-	// resp has all of the response data, pull out instance IDs:
-	fmt.Println("> Number of reservation sets: ", len(resp.Reservations))
-	for idx, res := range resp.Reservations {
-		fmt.Println("  > Number of instances: ", len(res.Instances))
-		for _, inst := range resp.Reservations[idx].Instances {
-			fmt.Println("    - Instance ID: ", *inst.InstanceId)
-		}
-	}
-
-/*	go dockercloud.Events(c, e)
+	go dockercloud.Events(c, e)
 
 	for {
     	select {
@@ -71,5 +66,61 @@ func main() {
 	        case err := <-e:
     	        log.Println(err)
     	}
-	} */
+	} 
+}
+
+/*
+ * Rewrite inbound rules for the security group
+ */
+func modifySecurityGroup(groupId string, ips []string) {
+	var inboundRules ec2.AuthorizeSecurityGroupIngressInput
+	var flushRules ec2.RevokeSecurityGroupIngressInput
+    var allProtocol string = "-1"
+
+    log.Println("Flushing security group... ")
+
+	svc := ec2.New(session.New())
+    inboundRules.GroupId = &groupId
+    flushRules.GroupId = &groupId
+
+	params := &ec2.DescribeSecurityGroupsInput{ GroupIds: []*string{ &groupId }}
+	resp, err := svc.DescribeSecurityGroups(params)
+
+	for i := 0; i < len(resp.SecurityGroups[0].IpPermissions); i++ {
+		existing := resp.SecurityGroups[0].IpPermissions[i]
+		flushRules.IpPermissions = append(flushRules.IpPermissions, existing)
+    }
+	
+	_, err = svc.RevokeSecurityGroupIngress(&flushRules)
+
+	if err == nil {
+		log.Println("done")
+	}
+
+	log.Println("Adding current node IPs to the group... ")
+
+	for i := 0; i < len(ips); i++ {
+	    entry := new(ec2.IpPermission)
+    	entry.IpProtocol = &allProtocol
+	    entry.IpRanges = []*ec2.IpRange{{CidrIp: &ips[i]}}
+    	inboundRules.IpPermissions = append(inboundRules.IpPermissions, entry)
+	}
+
+    _, err = svc.AuthorizeSecurityGroupIngress(&inboundRules)
+    
+    if err != nil {
+		panic(err)
+	} else {
+		log.Println("done")
+	}
+}
+
+func main() {
+	dockercloud.User = getEnv("DOCKER_CLOUD_USER")
+	dockercloud.ApiKey = getEnv("DOCKER_CLOUD_KEY")
+	dockercloud.Namespace = getEnv("DOCKER_CLOUD_NAMESPACE")
+
+	modifySecurityGroup(getEnv("AWS_SG_ID"), getNodeIps())
+
+	listenToEvents()
 }

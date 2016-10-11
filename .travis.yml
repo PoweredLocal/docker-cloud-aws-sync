@@ -1,5 +1,19 @@
 language: go
 
+sudo: required
+
+services:
+  - docker
+
 go:
   - 1.6
   - tip
+
+before_install:
+  - docker build -t dusterio/docker-cloud-aws-sync .
+  - docker run -d --name app dusterio/docker-cloud-aws-sync
+
+script:
+  - docker login -e "$DOCKER_EMAIL" -u "$DOCKER_USER" -p "$DOCKER_PASS"
+  - docker commit app dusterio/docker-cloud-aws-sync
+  - docker push dusterio/docker-cloud-aws-sync
