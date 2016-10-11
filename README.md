@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/PoweredLocal/docker-cloud-aws-sync.svg?branch=master)](https://travis-ci.org/PoweredLocal/docker-cloud-aws-sync)
 [![Code Climate](https://codeclimate.com/github/PoweredLocal/docker-cloud-aws-sync/badges/gpa.svg)](https://codeclimate.com/github/PoweredLocal/docker-cloud-aws-sync)
 
-Synchronizing Docker Cloud nodes with AWS security groups
+Synchronizing Docker Cloud node IPs with an AWS security group
 
 ## Overview
 
