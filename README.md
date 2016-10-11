@@ -6,11 +6,10 @@ Synchronizing Docker Cloud nodes with AWS security groups
 
 ## Overview
 
-A simple Golang script that synchronizes your Docker Cloud nodes with specified AWS security group - 
-so that your Docker Cloud nodes can always access AWS services (eg. RDS)
+A simple Golang script that synchronizes your Docker Cloud node list with specified AWS security group - 
+so that your Docker Cloud nodes can always access AWS services (eg. RDS, Memcached, etc)
 
-If all of your resources are in AWS, this is not an issue – you can keep everything inside the same VPC, but what if some of
-your nodes are hosted elsewhere, but need to access some of the AWS nodes or services?
+If all of your resources are in AWS, this is not an issue – you can keep everything inside the same VPC, but what if some of your nodes are hosted elsewhere but need to access some of the AWS services?
 
 ## Requirements
 
@@ -36,16 +35,30 @@ So either ```docker build ./``` or use the public image ```docker run -d -e DOCK
 
 Script relies on several environment variables to access your Docker Cloud and AWS:
 
-```
-DOCKER_CLOUD_USER (required) - Your username in Docker Cloud
-DOCKER_CLOUD_KEY (required) - API key
-DOCKER_CLOUD_NAMESPACE (optional) - If necessary, organization namespace
-DOCKER_CLOUD_TAG (optional) - If specified, only nodes that have this tag will be processed
+```bash
+DOCKER_CLOUD_USER 
+# required - Your username in Docker Cloud
 
-AWS_ACCESS_KEY_ID (required) - AWS key id
-AWS_SECRET_ACCESS_KEY (required) - AWS key secret
-AWS_SG_ID (required) - AWS security group id where rules should be pushed to
-AWS_REGION (required) - AWS region (AWS will use default if not set)
+DOCKER_CLOUD_KEY
+# required - API key
+
+DOCKER_CLOUD_NAMESPACE 
+# (optional) - If necessary, organization namespace
+
+DOCKER_CLOUD_TAG 
+# (optional) - If specified, only nodes that have this tag will be processed
+
+AWS_ACCESS_KEY_ID 
+# (required) - AWS key id
+
+AWS_SECRET_ACCESS_KEY 
+# (required) - AWS key secret
+
+AWS_SG_ID 
+# (required) - AWS security group id where rules should be pushed to
+
+AWS_REGION 
+# (required) - AWS region (AWS will use default if not set)
 
 ```
 
