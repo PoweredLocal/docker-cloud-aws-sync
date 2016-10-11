@@ -99,6 +99,9 @@ func modifySecurityGroup(groupId string, ips []string) {
 
 	log.Println("Adding current node IPs to the group... ")
 
+	// Add AWS internal network
+	ips = append(ips, "10.0.0.0/8")
+
 	for i := 0; i < len(ips); i++ {
 	    entry := new(ec2.IpPermission)
     	entry.IpProtocol = &allProtocol
