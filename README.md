@@ -1,4 +1,6 @@
 # docker-cloud-aws-sync
+[![Build Status](https://travis-ci.org/dusterio/docker-cloud-aws-sync.svg?branch=master)](https://travis-ci.org/dusterio/docker-cloud-aws-sync)
+
 Synchronizing Docker Cloud nodes with AWS security groups
 
 ## Overview
