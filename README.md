@@ -38,7 +38,9 @@ DOCKER_CLOUD_USER (required) - Your username in Docker Cloud
 DOCKER_CLOUD_KEY (required) - API key
 DOCKER_CLOUD_NAMESPACE (optional) - If necessary, organization namespace
 
-AWS_KEY (required) - AWS key id
-AWS_SECRET (required) - AWS key secret
+AWS_ACCESS_KEY_ID (required) - AWS key id
+AWS_SECRET_ACCESS_KEY (required) - AWS key secret
+AWS_SG_ID (required) - AWS security group id where rules should be pushed to
+AWS_REGION (required) - AWS region (AWS will use default if not set)
 
 ```
