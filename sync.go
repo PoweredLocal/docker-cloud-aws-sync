@@ -86,7 +86,7 @@ func modifySecurityGroup(groupId string, ips []string) {
 
 	for i := 0; i < len(resp.SecurityGroups[0].IpPermissions); i++ {
 		existing := resp.SecurityGroups[0].IpPermissions[i]
-		old.IpPermissions = append(oldRules.IpPermissions, existing)
+		oldRules.IpPermissions = append(oldRules.IpPermissions, existing)
     }
 	
 	_, err = svc.RevokeSecurityGroupIngress(&oldRules)
