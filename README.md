@@ -1,5 +1,6 @@
 # docker-cloud-aws-sync
 [![Build Status](https://travis-ci.org/dusterio/docker-cloud-aws-sync.svg?branch=master)](https://travis-ci.org/dusterio/docker-cloud-aws-sync)
+[![Code Climate](https://codeclimate.com/github/dusterio/docker-cloud-aws-sync/badges/gpa.svg)](https://codeclimate.com/github/dusterio/docker-cloud-aws-sync)
 
 Synchronizing Docker Cloud nodes with AWS security groups
 
@@ -29,7 +30,7 @@ Security groups are part of EC2 service so don't forget to attach a policy with 
 
 There is a Dockerfile included and there is a [public repository](https://hub.docker.com/r/dusterio/docker-cloud-aws-sync/) in Docker Hub.
 
-So either ```docker build ./``` or use the public image ```docker run -e DOCKER_CLOUD_xxx dusterio/docker-cloud-aws-sync```
+So either ```docker build ./``` or use the public image ```docker run -d -e DOCKER_CLOUD_xxx=xxx -e AWS_xxx=xxx dusterio/docker-cloud-aws-sync```
 
 ## Environment variables
 
@@ -48,6 +49,11 @@ AWS_REGION (required) - AWS region (AWS will use default if not set)
 
 ```
 
-# NB
+## To do
+
+- Parse live Docker Cloud event stream
+- Add node tag support
+
+## NB
 
 Please note that EC2 security groups allow up to 50 rules per group. Therefore, if you have more than 50 nodes you have to create multiple security groups and add Docker Cloud nodes to them based on tags. Or you have to migrate everything to a single cloud provider! :)

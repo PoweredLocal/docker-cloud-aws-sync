@@ -115,10 +115,20 @@ func modifySecurityGroup(groupId string, ips []string) {
 	}
 }
 
-func main() {
+/*
+ * Initialize Docker Cloud SDK
+ */
+func initDockerCloud() {
 	dockercloud.User = getEnv("DOCKER_CLOUD_USER")
 	dockercloud.ApiKey = getEnv("DOCKER_CLOUD_KEY")
-	dockercloud.Namespace = getEnv("DOCKER_CLOUD_NAMESPACE")
+
+	if len(os.Getenv("DOCKER_CLOUD_NAMESPACE")) > 0 {
+		dockercloud.Namespace = os.Getenv("DOCKER_CLOUD_NAMESPACE")
+	}
+}
+
+func main() {
+	initDockerCloud()
 
 	modifySecurityGroup(getEnv("AWS_SG_ID"), getNodeIps())
 
