@@ -57,7 +57,7 @@ AWS_SECRET_ACCESS_KEY
 # (required) - AWS key secret
 
 AWS_SG_ID 
-# (required) - AWS security group id where rules should be pushed to
+# (required) - AWS security group id where rules should be pushed to. You can pass multiple security groups - separate them with commas
 
 AWS_REGION 
 # (required) - AWS region (AWS will use default if not set)

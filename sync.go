@@ -5,6 +5,7 @@ import "github.com/aws/aws-sdk-go/service/ec2"
 import "github.com/aws/aws-sdk-go/aws/session"
 import "log"
 import "os"
+import "strings"
 
 /*
  * Return an environment variable. If it's not set - crash
@@ -132,7 +133,11 @@ func initDockerCloud() {
 func main() {
 	initDockerCloud()
 
-	modifySecurityGroup(getEnv("AWS_SG_ID"), getNodeIps())
+	groups := strings.split(getEnv("AWS_SG_ID"), ',')
+
+	for i := 0; i < len(groups); i++ {
+		modifySecurityGroup(groups[i], getNodeIps())
+	}
 
 	listenToEvents()
 }
