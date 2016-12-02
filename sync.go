@@ -55,8 +55,9 @@ func listenToEvents() {
 
 	c := make(chan dockercloud.Event)
 	e := make(chan error)
+	done := make(chan bool)
 
-	go dockercloud.Events(c, e)
+	go dockercloud.Events(c, e, done)
 
 	for {
     	select {
@@ -133,7 +134,7 @@ func initDockerCloud() {
 func main() {
 	initDockerCloud()
 
-	groups := strings.Split(getEnv("AWS_SG_ID"), ',')
+	groups := strings.Split(getEnv("AWS_SG_ID"), ",")
 
 	for i := 0; i < len(groups); i++ {
 		modifySecurityGroup(groups[i], getNodeIps())
