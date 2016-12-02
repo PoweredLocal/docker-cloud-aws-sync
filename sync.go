@@ -133,7 +133,7 @@ func initDockerCloud() {
 func main() {
 	initDockerCloud()
 
-	groups := strings.split(getEnv("AWS_SG_ID"), ',')
+	groups := strings.Split(getEnv("AWS_SG_ID"), ',')
 
 	for i := 0; i < len(groups); i++ {
 		modifySecurityGroup(groups[i], getNodeIps())
